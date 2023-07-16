@@ -8,7 +8,7 @@ public class Auth {
   @Data
   public static class SignIn {
 
-    private String email;
+    private String phone;
     private String password;
   }
 
@@ -16,12 +16,12 @@ public class Auth {
   public static class SignUp {
 
     private String username;
-    private String email;
+    private String phone;
     private String password;
 
     public UserEntity toEntity() {
       return UserEntity.builder()
-          .email(this.email)
+          .phone(this.phone)
           .username(this.username)
           .password(this.password)
           .build();
