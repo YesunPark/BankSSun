@@ -93,7 +93,7 @@
 
 ## [ERD 데이터 모델링]
 
-![img](./docs/ERD%200715.png)
+![img](./docs/ERD%200716.png)
 
 ## [Trouble Shooting]
 
