@@ -90,6 +90,8 @@
 
 </div>
 
+- 라이브러리 : Spring Web, Spring Data JPA, Lombok, Spring Security
+
 
 ## [ERD 데이터 모델링]
 
