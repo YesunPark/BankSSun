@@ -1,6 +1,6 @@
 package com.zerobase.BankSSun.service;
 
-import com.zerobase.BankSSun.model.Auth;
+import com.zerobase.BankSSun.domain.Auth;
 import com.zerobase.BankSSun.persist.UserRepository;
 import com.zerobase.BankSSun.persist.entity.UserEntity;
 import lombok.AllArgsConstructor;
@@ -27,9 +27,9 @@ public class UserService implements UserDetailsService {
   }
 
   public UserEntity register(Auth.SignUp user) { // 회원가입
-    boolean exists = this.userRepository.existsByEmail(user.getEmail());
+    boolean exists = this.userRepository.existsByEmail(user.getPhone());
     if (exists) {
-      throw new RuntimeException("이미 가입된 이메일입니다.");
+      throw new RuntimeException("이미 가입된 휴대전화번호입니다.");
     }
 
     user.setPassword(this.passwordEncoder.encode(user.getPassword()));

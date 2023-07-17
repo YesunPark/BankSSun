@@ -1,4 +1,4 @@
-package com.zerobase.BankSSun.model;
+package com.zerobase.BankSSun.domain;
 
 import com.zerobase.BankSSun.persist.entity.UserEntity;
 import lombok.Data;
@@ -12,7 +12,7 @@ public class Auth {
     private String password;
   }
 
-  @Data
+  @Data // setter 가 있어야 회원정보 저장 가능
   public static class SignUp {
 
     private String username;
