@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-  private final UserService userService;
-  private final TokenProvider tokenProvider;
+    private final UserService userService;
+    private final TokenProvider tokenProvider;
 
-  /**
-   * 회원가입 api_23.07.16
-   */
-  @PostMapping("/signup")
-  public ResponseEntity<UserEntity> signup(@RequestBody Auth.SignUp request) {
-    UserEntity userEntity = this.userService.register(request);
-    return ResponseEntity.ok(userEntity);
-  }
+    /**
+     * 회원가입 api_23.07.16
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<UserEntity> signup(@RequestBody Auth.SignUp request) {
+        UserEntity userEntity = this.userService.signUp(request);
+        return ResponseEntity.ok(userEntity);
+    }
 }
