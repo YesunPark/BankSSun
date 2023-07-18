@@ -26,7 +26,10 @@ public class UserService implements UserDetailsService {
         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다. => " + email));
   }
 
-  public UserEntity register(Auth.SignUp user) { // 회원가입
+  /**
+   * 회원가입_23.07.18
+   */
+  public UserEntity signUp(Auth.SignUp user) {
     boolean exists = this.userRepository.existsByEmail(user.getPhone());
     if (exists) {
       throw new RuntimeException("이미 가입된 휴대전화번호입니다.");
@@ -36,7 +39,10 @@ public class UserService implements UserDetailsService {
     return this.userRepository.save(user.toEntity());
   }
 
-  public UserEntity authenticate(Auth.SignIn user) { // 로그인 시 검사 
+  /**
+   * 로그인 시 검사_23.07.18
+   */
+  public UserEntity authenticate(Auth.SignIn user) {
     return null;
   }
 }
