@@ -1,9 +1,12 @@
 package com.zerobase.BankSSun.persist.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
@@ -11,6 +14,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,43 +25,56 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "USER")
+@EntityListeners(value = {AuditingEntityListener.class})
 public class UserEntity implements UserDetails {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  private String username;
-  private String phone;
-  private String password;
-  private LocalDateTime registeredAt;
+    @Id
+    @Column(name = "id")
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return null;
-  }
+    @NotNull
+    private String username;
 
-  @Override
-  public String getUsername() {
-    return null;
-  }
+    @NotNull
+    @Column(unique = true)
+    private String phone;
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return false;
-  }
+    @NotNull
+    private String password;
 
-  @Override
-  public boolean isAccountNonLocked() {
-    return false;
-  }
+    @NotNull
+    @CreatedDate // 자동 저장을 위한 것(EntityListeners 필요)
+    private LocalDateTime registeredAt; // 회원가입 일시
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return false;
-  }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
 
-  @Override
-  public boolean isEnabled() {
-    return false;
-  }
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }
