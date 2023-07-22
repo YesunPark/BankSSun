@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.1.1'
+    id 'org.springframework.boot' version '2.7.14'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
@@ -29,6 +29,10 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.0'
+    implementation 'com.mysql:mysql-connector-j'
+//    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+//    implementation 'org.springframework.data:spring-data-envers' => baseEntity 사용하기 위한 라이브러리
+//    @AuditOverride. 지금은 사용안해서 주석
 
     compileOnly 'org.projectlombok:lombok'
 
