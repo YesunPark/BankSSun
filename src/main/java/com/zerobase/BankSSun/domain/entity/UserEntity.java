@@ -3,7 +3,6 @@ package com.zerobase.BankSSun.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.Column;
@@ -15,7 +14,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -36,7 +34,6 @@ public class UserEntity implements UserDetails {
 
     @Id
     @Column(name = "id")
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -53,7 +50,6 @@ public class UserEntity implements UserDetails {
     @NotNull
     private String role;
 
-    @NotNull
     @CreatedDate // 자동 저장을 위한 것(EntityListeners 필요)
     private LocalDateTime registeredAt; // 회원가입 일시
 
