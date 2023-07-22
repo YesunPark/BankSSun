@@ -1,7 +1,7 @@
 package com.zerobase.BankSSun.web;
 
-import com.zerobase.BankSSun.domain.Auth;
-import com.zerobase.BankSSun.persist.entity.UserEntity;
+import com.zerobase.BankSSun.model.Auth;
+import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.security.TokenProvider;
 import com.zerobase.BankSSun.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class AuthController {
     /**
      * 회원가입 api_23.07.16
      */
-    @PostMapping("/signup")
-    public ResponseEntity<UserEntity> signup(@RequestBody Auth.SignUp request) {
+    @PostMapping("/sign-up")
+    public ResponseEntity<UserEntity> signUp(@RequestBody Auth.SignUp request) {
         UserEntity userEntity = this.userService.signUp(request);
         return ResponseEntity.ok(userEntity);
     }
