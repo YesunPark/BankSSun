@@ -29,4 +29,16 @@ public class AuthController {
         UserEntity userEntity = this.userService.signUp(request);
         return ResponseEntity.ok(userEntity);
     }
+
+
+    /**
+     * 로그인 api_23.07.21
+     */
+    @PostMapping("/sign-in")
+    public ResponseEntity<String> signIn(@RequestBody Auth.SignIn request) {
+        UserEntity user = this.userService.authenticate(request);
+        String token = this.tokenProvider.generateToken(user.getPhone(), user.getRole());
+        return ResponseEntity.ok(token);
+    }
+
 }
