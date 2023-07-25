@@ -1,5 +1,8 @@
 package com.zerobase.BankSSun.service;
 
+import static com.zerobase.BankSSun.type.ErrorCode.ALREADY_EXISTS_PHONE;
+
+import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
 import com.zerobase.BankSSun.exception.UserException;
 import com.zerobase.BankSSun.dto.Auth;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
@@ -33,10 +36,10 @@ public class UserService implements UserDetailsService {
      * 회원가입_23.07.25
      */
     @Transactional
-    public UserEntity signUp(Auth.SignUp user) {
+    public UserEntity signUp(SignUpRequest user) {
         boolean exists = this.userRepository.existsByPhone(user.getPhone());
         if (exists) {
-            throw new UserException(ErrorCode.ALREADY_EXISTS_PHONE);
+            throw new UserException(ALREADY_EXISTS_PHONE);
         }
 
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
@@ -48,7 +51,7 @@ public class UserService implements UserDetailsService {
      */
     public UserEntity authenticate(Auth.SignIn user) {
         UserEntity userEntity = this.userRepository.findByPhone(user.getPhone())
-            .orElseThrow(() -> new UserException(ErrorCode.ALREADY_EXISTS_PHONE));
+            .orElseThrow(() -> new UserException(ALREADY_EXISTS_PHONE));
 
         if (!this.passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
             throw new UserException(ErrorCode.PASSWORD_NOT_MATCH);
