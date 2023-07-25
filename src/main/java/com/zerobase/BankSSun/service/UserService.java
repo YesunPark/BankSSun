@@ -1,7 +1,7 @@
 package com.zerobase.BankSSun.service;
 
 import com.zerobase.BankSSun.exception.UserException;
-import com.zerobase.BankSSun.model.Auth;
+import com.zerobase.BankSSun.dto.Auth;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.type.ErrorCode;

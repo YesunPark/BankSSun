@@ -1,7 +1,6 @@
-package com.zerobase.BankSSun.model;
+package com.zerobase.BankSSun.dto;
 
 import com.zerobase.BankSSun.domain.entity.UserEntity;
-import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 

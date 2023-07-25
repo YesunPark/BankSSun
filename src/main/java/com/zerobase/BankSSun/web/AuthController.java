@@ -1,6 +1,6 @@
 package com.zerobase.BankSSun.web;
 
-import com.zerobase.BankSSun.model.Auth;
+import com.zerobase.BankSSun.dto.Auth;
 import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.security.TokenProvider;
 import com.zerobase.BankSSun.service.UserService;
