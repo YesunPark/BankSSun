@@ -30,13 +30,13 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 회원가입_23.07.23
+     * 회원가입_23.07.25
      */
     @Transactional
     public UserEntity signUp(Auth.SignUp user) {
         boolean exists = this.userRepository.existsByPhone(user.getPhone());
         if (exists) {
-            throw new UserException(ErrorCode.USER_NOT_FOUND);
+            throw new UserException(ErrorCode.ALREADY_EXISTS_PHONE);
         }
 
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
