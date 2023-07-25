@@ -3,7 +3,7 @@ package com.zerobase.BankSSun.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.zerobase.BankSSun.domain.entity.UserEntity;
-import com.zerobase.BankSSun.dto.Auth.SignUp;
+import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class UserServiceTest {
     @DisplayName("회원가입")
     void signUp() {
         //given
-        SignUp form = SignUp.builder()
+        SignUpRequest form = SignUpRequest.builder()
             .phone("01012345678")
             .username("test")
             .password("101010")

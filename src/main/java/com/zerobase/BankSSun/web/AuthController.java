@@ -2,6 +2,8 @@ package com.zerobase.BankSSun.web;
 
 import com.zerobase.BankSSun.dto.Auth;
 import com.zerobase.BankSSun.domain.entity.UserEntity;
+import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
+import com.zerobase.BankSSun.dto.SignUpDto.SignUpResponse;
 import com.zerobase.BankSSun.security.TokenProvider;
 import com.zerobase.BankSSun.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,18 @@ public class AuthController {
     private final TokenProvider tokenProvider;
 
     /**
-     * 회원가입 api_23.07.16
+     * 회원가입 api_23.07.25
      */
     @PostMapping("/sign-up")
-    public ResponseEntity<UserEntity> signUp(@RequestBody Auth.SignUp request) {
+    public ResponseEntity<SignUpResponse> signUp(@RequestBody SignUpRequest request) {
         UserEntity userEntity = this.userService.signUp(request);
-        return ResponseEntity.ok(userEntity);
+        return ResponseEntity.ok(
+            SignUpResponse.builder()
+                .id(userEntity.getId())
+                .phone(userEntity.getPhone())
+                .role(userEntity.getRole())
+                .username(userEntity.getUsername())
+                .build());
     }
 
 
