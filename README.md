@@ -90,11 +90,11 @@
 
 </div>
 
-- 라이브러리 : Spring Web, Spring Data JPA, Lombok, Spring Security
+- 라이브러리 : Spring Web, Spring Data JPA, Lombok, Spring Security, JWT
 
 ## [ERD 데이터 모델링]
 
-![img](./docs/ERD%200717.png)
+![img](./docs/ERD%200728.png)
 
 ## [Trouble Shooting]
 
