@@ -1,13 +1,11 @@
 package com.zerobase.BankSSun.domain.entity;
 
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,20 +15,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.envers.AuditOverride;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Builder
 @Getter
-@ToString
+@ToString // ToString, NoArgsCons, AllArgsCons 꼭 필요한지 다시 확인
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "USER")
-@EntityListeners(AuditingEntityListener.class)
-public class UserEntity implements UserDetails {
+@AuditOverride(forClass = BaseEntity.class)
+public class UserEntity extends BaseEntity implements UserDetails {
 
     @Id
     @Column(name = "id")
@@ -49,9 +46,6 @@ public class UserEntity implements UserDetails {
 
     @NotNull
     private String role;
-
-    @CreatedDate // 자동 저장을 위한 것(EntityListeners 필요)
-    private LocalDateTime registeredAt; // 회원가입 일시
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
