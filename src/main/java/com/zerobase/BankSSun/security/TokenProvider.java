@@ -40,7 +40,7 @@ public class TokenProvider {
             .setClaims(claims)
             .setIssuedAt(now) // 토큰 생성 시간
             .setExpiration(expiredDate) // 토큰 만료 시간
-            .signWith(SignatureAlgorithm.HS512, this.secretKey) // 사용할 암호화 알고리즘, 시크릿 키
+            .signWith(SignatureAlgorithm.HS512, secretKey) // 사용할 암호화 알고리즘, 시크릿 키
             .compact();
     }
 
@@ -48,7 +48,7 @@ public class TokenProvider {
      * jwt 에서 인증정보 추출_23.07.21
      */
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = this.userService.loadUserByUsername(this.getPhone(jwt));
+        UserDetails userDetails = userService.loadUserByUsername(getPhone(jwt));
         return new UsernamePasswordAuthenticationToken(userDetails, "",
             userDetails.getAuthorities());
     }
@@ -57,7 +57,7 @@ public class TokenProvider {
      * 토큰에서 사용자 휴대전화번호 추출_23.07.16
      */
     public String getPhone(String token) {
-        return this.parseClaims(token).getSubject();
+        return parseClaims(token).getSubject();
     }
 
     /**
@@ -68,7 +68,7 @@ public class TokenProvider {
             return false;
         }
 
-        Claims claims = this.parseClaims(token);
+        Claims claims = parseClaims(token);
         return !claims.getExpiration().before(new Date());
     }
 
@@ -77,7 +77,7 @@ public class TokenProvider {
      */
     private Claims parseClaims(String token) {
         try {
-            return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
