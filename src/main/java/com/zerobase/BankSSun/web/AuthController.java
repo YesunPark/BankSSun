@@ -1,7 +1,7 @@
 package com.zerobase.BankSSun.web;
 
 import com.zerobase.BankSSun.domain.entity.UserEntity;
-import com.zerobase.BankSSun.dto.SignInDto;
+import com.zerobase.BankSSun.dto.SignInRequest;
 import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
 import com.zerobase.BankSSun.dto.SignUpDto.SignUpResponse;
 import com.zerobase.BankSSun.security.TokenProvider;
@@ -43,7 +43,7 @@ public class AuthController {
      * 로그인 api_23.07.26
      */
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody SignInDto request) {
+    public ResponseEntity<String> signIn(@RequestBody SignInRequest request) {
         UserEntity user = this.userService.authenticate(request);
         String token = this.tokenProvider.generateToken(user.getPhone(), user.getRole());
         return ResponseEntity.ok(token);

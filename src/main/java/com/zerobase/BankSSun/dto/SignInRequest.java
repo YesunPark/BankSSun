@@ -3,7 +3,7 @@ package com.zerobase.BankSSun.dto;
 import lombok.Getter;
 
 @Getter
-public class SignInDto {
+public class SignInRequest {
 
     private String phone;
     private String password;

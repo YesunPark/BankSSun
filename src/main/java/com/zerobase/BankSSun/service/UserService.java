@@ -4,7 +4,7 @@ import static com.zerobase.BankSSun.type.ErrorCode.ALREADY_EXISTS_PHONE;
 
 import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
-import com.zerobase.BankSSun.dto.SignInDto;
+import com.zerobase.BankSSun.dto.SignInRequest;
 import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
 import com.zerobase.BankSSun.exception.UserException;
 import com.zerobase.BankSSun.type.ErrorCode;
@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
     /**
      * 로그인 시 검사_23.07.23
      */
-    public UserEntity authenticate(SignInDto user) {
+    public UserEntity authenticate(SignInRequest user) {
         UserEntity userEntity = this.userRepository.findByPhone(user.getPhone())
             .orElseThrow(() -> new UserException(ALREADY_EXISTS_PHONE));
 
