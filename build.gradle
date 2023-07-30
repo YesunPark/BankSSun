@@ -32,7 +32,7 @@ dependencies {
     implementation 'com.mysql:mysql-connector-j'
 //    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation 'org.springframework.data:spring-data-envers'
-//  => baseEntity 사용하기 위한 라이브러리 @AuditOverride. 지금은 사용안해서 주석
+//  => baseEntity 사용하기 위한 라이브러리 baseEntity 를 받는 클래스에 @AuditOverride 선언필요
 
     compileOnly 'org.projectlombok:lombok'
 
