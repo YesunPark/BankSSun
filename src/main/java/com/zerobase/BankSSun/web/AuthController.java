@@ -40,12 +40,15 @@ public class AuthController {
 
 
     /**
-     * 로그인 api_23.07.26
+     * 로그인 api_23.08.01
      */
     @PostMapping("/sign-in")
     public ResponseEntity<String> signIn(@RequestBody SignInRequest request) {
         UserEntity user = this.userService.authenticate(request);
-        String token = this.tokenProvider.generateToken(user.getPhone(), user.getRole());
+        String token = this.tokenProvider.generateToken(
+            user.getId(),
+            user.getPhone(),
+            user.getRole());
         return ResponseEntity.ok(token);
     }
 

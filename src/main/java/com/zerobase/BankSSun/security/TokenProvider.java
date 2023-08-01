@@ -29,8 +29,10 @@ public class TokenProvider {
     /**
      * 토큰 생성(발급)_23.07.21
      */
-    public String generateToken(String phone, String role) {
-        Claims claims = Jwts.claims().setSubject(phone); // 사용자의 정보를 저장하기 위한 claim
+    public String generateToken(Long userId, String phone, String role) {
+        Claims claims = Jwts.claims() // 사용자의 정보를 저장하기 위한 claim
+            .setSubject(phone)
+            .setId(userId + "");
         claims.put(KEY_ROLE, role);
 
         Date now = new Date();
@@ -45,10 +47,10 @@ public class TokenProvider {
     }
 
     /**
-     * jwt 에서 인증정보 추출_23.07.21
+     * jwt 에서 인증정보 추출_23.07.31
      */
-    public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = userService.loadUserByUsername(getPhone(jwt));
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userService.loadUserByUsername(getPhone(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "",
             userDetails.getAuthorities());
     }
@@ -58,6 +60,13 @@ public class TokenProvider {
      */
     public String getPhone(String token) {
         return parseClaims(token).getSubject();
+    }
+
+    /**
+     * 토큰에서 사용자 id 추출_23.08.01
+     */
+    public Long getId(String token) {
+        return Long.parseLong(parseClaims(token).getId());
     }
 
     /**
