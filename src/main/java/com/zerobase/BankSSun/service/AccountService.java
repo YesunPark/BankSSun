@@ -1,17 +1,20 @@
 package com.zerobase.BankSSun.service;
 
-import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_FOUND;
+import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_EXPIRED;
 
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
-import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.exception.UserException;
+import com.zerobase.BankSSun.security.TokenProvider;
+import java.util.Objects;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -19,45 +22,45 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
+    private final TokenProvider tokenProvider;
+
     /**
-     * 계좌 생성_23.07.31
+     * 계좌 생성_23.08.01
      */
     @Transactional
-    public AccountCreateDto.Response createAccount(Long userId, Long initBalance) {
-        // 1. 사용자가 있는지 조회
-        // 2. 있다면 계좌번호 생성 후 계좌 저장, 저장된 정보를 response dto 에 담아 넘김
-        UserEntity userEntity = userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+    public AccountEntity createAccount(String token, AccountCreateDto.Request request) {
+        // 토큰 유효성 확인
+        if (!tokenProvider.validateToken(token)) {  // 여기서부터 오류 남..ㅠ
+            throw new UserException(TOKEN_EXPIRED);
+        }
 
-        AccountEntity savedAccount = accountRepository.save(AccountEntity.builder()
-            .userId(userEntity.getId())
-            .accountNumber(makeAccountNumber())
-            .accountName("샘플")
-            .amount(initBalance)
-            .isDeleted(false)
-            .build());
+        // 토큰에서 추출한 사용자와 요청으로 받은 사용자가 동일한지 비교
+        Long tokenUserId = tokenProvider.getId(token);
+        if (!Objects.equals(request.getUserId(), tokenUserId)) {
+            throw new RuntimeException("요청하신 사용자와 Token 으로 인증된 사용자가 일치하지 않습니다.");
+        }
 
-        return AccountCreateDto.Response.builder()
-            .userId(savedAccount.getUserId())
-            .accountNumber(savedAccount.getAccountNumber())
-            .amount(savedAccount.getAmount())
-            .createdAt(savedAccount.getCreatedAt())
-            .build();
+        // 맞다면 계좌번호 생성 후 계좌 저장, 저장된 정보 컨트롤러로 넘김
+        return accountRepository.save(
+            AccountEntity.builder()
+                .userId(request.getUserId())
+                .accountNumber(makeAccountNumber())
+                .accountName("샘플")
+                .amount(request.getInitialBalance())
+                .isDeleted(false)
+                .build()
+        );
     }
 
 
     /**
-     * 계좌번호 생성_23.07.31
+     * 계좌번호 생성_23.08.01
      */
     private String makeAccountNumber() {
-        // 계좌번호 13자리 생성(893-XXXXXX-XXXXX)
-        // 원래 랜덤으로 생성 예정이었는데, 계좌테이블 가장 마지막 정보를 가져오고
-        // 거기서 +1 한 숫자로 생성하는 것도 괜찮은 듯
-        String number = "8934567890123";
-        // 중복 확인
-        if (accountRepository.existsByAccountNumber(number)) { // 계좌번호가 이미 존재하는 경우
-            makeAccountNumber();
-        }
-        return number;
+        // 계좌번호 11~13자리 생성(초기값: 893-0000-0000)
+        // 계좌테이블 가장 마지막으로 생성된 계좌번호 +1 한 숫자 생성
+        return accountRepository.findFirstByOrderByIdDesc()
+            .map(accountEntity -> (Long.parseLong(accountEntity.getAccountNumber()) + 1) + "")
+            .orElse("89300000000");
     }
 }
