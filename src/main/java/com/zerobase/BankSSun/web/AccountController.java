@@ -1,5 +1,7 @@
 package com.zerobase.BankSSun.web;
 
+import static com.zerobase.BankSSun.security.JwtAuthenticationFilter.TOKEN_PREFIX;
+
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.service.AccountService;
@@ -25,7 +27,7 @@ public class AccountController {
         @RequestHeader(name = "Authorization") String token,
         @RequestBody @Valid AccountCreateDto.Request request
     ) {
-        AccountEntity accountEntity = accountService.createAccount(token, request);
+        AccountEntity accountEntity = accountService.createAccount(token.substring(TOKEN_PREFIX.length()), request);
         return ResponseEntity.ok(
             AccountCreateDto.Response.builder()
                 .userId(accountEntity.getUserId())

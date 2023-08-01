@@ -1,12 +1,9 @@
 package com.zerobase.BankSSun.service;
 
-import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_EXPIRED;
-
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
-import com.zerobase.BankSSun.exception.UserException;
 import com.zerobase.BankSSun.security.TokenProvider;
 import java.util.Objects;
 import javax.transaction.Transactional;
@@ -29,15 +26,10 @@ public class AccountService {
      */
     @Transactional
     public AccountEntity createAccount(String token, AccountCreateDto.Request request) {
-        // 토큰 유효성 확인
-        if (!tokenProvider.validateToken(token)) {  // 여기서부터 오류 남..ㅠ
-            throw new UserException(TOKEN_EXPIRED);
-        }
-
         // 토큰에서 추출한 사용자와 요청으로 받은 사용자가 동일한지 비교
         Long tokenUserId = tokenProvider.getId(token);
         if (!Objects.equals(request.getUserId(), tokenUserId)) {
-            throw new RuntimeException("요청하신 사용자와 Token 으로 인증된 사용자가 일치하지 않습니다.");
+            throw new RuntimeException("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다.");
         }
 
         // 맞다면 계좌번호 생성 후 계좌 저장, 저장된 정보 컨트롤러로 넘김
