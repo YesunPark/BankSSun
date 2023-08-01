@@ -11,10 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.envers.AuditOverride;
 
 @Builder
 @Getter
+@Setter
 @RequiredArgsConstructor
 @AllArgsConstructor // => 필요한 것 맞는가..!
 //@NoArgsConstructor
