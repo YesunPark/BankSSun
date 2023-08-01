@@ -32,12 +32,15 @@ public class AccountService {
             throw new RuntimeException("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다.");
         }
 
+        String newAccountNumber = makeAccountNumber();
+        String newAccountName = request.getAccountName();
+
         // 맞다면 계좌번호 생성 후 계좌 저장, 저장된 정보 컨트롤러로 넘김
         return accountRepository.save(
             AccountEntity.builder()
                 .userId(request.getUserId())
-                .accountNumber(makeAccountNumber())
-                .accountName("샘플")
+                .accountNumber(newAccountNumber)
+                .accountName(newAccountName == null ? newAccountNumber : newAccountName)
                 .amount(request.getInitialBalance())
                 .isDeleted(false)
                 .build()

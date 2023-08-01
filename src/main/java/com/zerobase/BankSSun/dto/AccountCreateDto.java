@@ -15,6 +15,7 @@ public class AccountCreateDto {
         @NotNull
         @Min(1)
         private Long userId;
+        private String accountName;
         @NotNull
         @Min(0)
         private Long initialBalance;
