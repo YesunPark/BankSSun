@@ -12,7 +12,8 @@ public enum ErrorCode {
 
     USER_NOT_PERMITTED("사용자 권한이 없습니다."),
 
-    TOKEN_EXPIRED("유효기간이 만료된 토큰입니다. 다시 로그인해주세요.");
+    TOKEN_EXPIRED("유효기간이 만료된 토큰입니다. 다시 로그인해주세요."),
+    TOKEN_NOT_MATCH_USER("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다.");
 
     private final String description;
 }
