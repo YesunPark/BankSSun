@@ -1,9 +1,12 @@
 package com.zerobase.BankSSun.service;
 
+import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_NOT_MATCH_USER;
+
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
+import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
 import java.util.Objects;
 import javax.transaction.Transactional;
@@ -29,7 +32,7 @@ public class AccountService {
         // 토큰에서 추출한 사용자와 요청으로 받은 사용자가 동일한지 비교
         Long tokenUserId = tokenProvider.getId(token);
         if (!Objects.equals(request.getUserId(), tokenUserId)) {
-            throw new RuntimeException("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다.");
+            throw new CustomException(TOKEN_NOT_MATCH_USER);
         }
 
         String newAccountNumber = makeAccountNumber();
