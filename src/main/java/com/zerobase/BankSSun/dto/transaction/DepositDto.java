@@ -1,4 +1,4 @@
-package com.zerobase.BankSSun.dto.account;
+package com.zerobase.BankSSun.dto.transaction;
 
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
