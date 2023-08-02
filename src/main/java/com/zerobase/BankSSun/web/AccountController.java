@@ -4,6 +4,7 @@ import static com.zerobase.BankSSun.security.JwtAuthenticationFilter.TOKEN_PREFI
 
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
+import com.zerobase.BankSSun.dto.account.DepositDto;
 import com.zerobase.BankSSun.dto.AccountDeleteRequest;
 import com.zerobase.BankSSun.service.AccountService;
 import javax.validation.Valid;
@@ -53,5 +54,15 @@ public class AccountController {
             accountService.deleteAccount(
                 token.substring(TOKEN_PREFIX.length()), request)
         );
+    }
+
+    /**
+     * 현금 입금_23.08.02
+     */
+    @PostMapping("/deposit")
+    public ResponseEntity<DepositDto.Response> deposit(
+        @RequestBody @Valid DepositDto.Request request) {
+        DepositDto.Response response = accountService.deposit(request);
+        return ResponseEntity.ok(response);
     }
 }
