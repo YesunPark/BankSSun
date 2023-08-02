@@ -9,7 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +47,7 @@ public class AccountEntity extends BaseEntity {
     private String accountName;
 
     @NotNull
+    @Min(value = 0,message = "계좌의 잔액은 0원 이상이어야 합니다.")
     private Long amount;
 
     @NotNull
