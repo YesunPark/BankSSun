@@ -36,7 +36,7 @@ public class AccountEntity extends BaseEntity {
     @NotNull
     private Long userId;
 
-    @NotBlank(message = "은행 이름은 필수값입니다.")
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Bank bank;
 

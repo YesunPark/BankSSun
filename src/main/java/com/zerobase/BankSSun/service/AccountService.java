@@ -11,6 +11,7 @@ import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.dto.AccountDeleteRequest;
 import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
+import com.zerobase.BankSSun.type.Bank;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.transaction.Transactional;
@@ -28,7 +29,7 @@ public class AccountService {
     private final TokenProvider tokenProvider;
 
     /**
-     * 계좌 생성_23.08.01
+     * 계좌 생성(SSun 은행)_23.08.02
      */
     @Transactional
     public AccountEntity createAccount(String token, AccountCreateDto.Request request) {
@@ -45,6 +46,7 @@ public class AccountService {
         return accountRepository.save(
             AccountEntity.builder()
                 .userId(request.getUserId())
+                .bank(Bank.SSun)
                 .accountNumber(newAccountNumber)
                 .accountName(newAccountName == null ? newAccountNumber : newAccountName)
                 .amount(request.getInitialBalance())
