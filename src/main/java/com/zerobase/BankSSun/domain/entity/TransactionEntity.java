@@ -40,13 +40,13 @@ public class TransactionEntity {
     @NotNull
     private Long amount;
 
-    private String depositName;
+    private String depositName; // 입금자명
 
-    private String withdrawName;
+    private String withdrawName; // 출금자명
 
-    private String receivedName;
+    private String receivedName; // 송금받는 계좌주명
 
-    private String receivedAccount;
+    private String receivedAccount; // 송금받는 계좌번호
 
     @CreatedDate
     private LocalDateTime transactedAt;

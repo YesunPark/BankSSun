@@ -16,8 +16,10 @@ public enum ErrorCode {
     TOKEN_NOT_MATCH_USER("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다."),
 
     ACCOUNT_NOT_FOUND("계좌를 찾을 수 없습니다."),
+    SENT_ACCOUNT_NOT_FOUND("송금 보내는 계좌를 찾을 수 없습니다."),
+    RECEIVED_ACCOUNT_NOT_FOUND("송금 받는 계좌를 찾을 수 없습니다."),
     ACCOUNT_NOT_EMPTY("계좌에 잔액이 남아있습니다."),
-    BALANCE_NOT_ENOUGH("계좌의 잔액이 부족합니다.")
+    BALANCE_NOT_ENOUGH("계좌의 잔액이 부족합니다."),
     ;
 
     private final String description;

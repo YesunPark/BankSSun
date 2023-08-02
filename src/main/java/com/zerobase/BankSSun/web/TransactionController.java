@@ -3,6 +3,7 @@ package com.zerobase.BankSSun.web;
 import static com.zerobase.BankSSun.security.JwtAuthenticationFilter.TOKEN_PREFIX;
 
 import com.zerobase.BankSSun.dto.transaction.DepositDto;
+import com.zerobase.BankSSun.dto.transaction.RemittanceDto;
 import com.zerobase.BankSSun.dto.transaction.WithdrawDto;
 import com.zerobase.BankSSun.service.TransactionService;
 import javax.validation.Valid;
@@ -43,5 +44,18 @@ public class TransactionController {
         WithdrawDto.Response response = transactionService.withdraw(
             token.substring(TOKEN_PREFIX.length()), request);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 송금_23.08.02
+     */
+    @PutMapping("/remittance")
+    public ResponseEntity<RemittanceDto.Response> remittance(
+        @RequestHeader(name = "Authorization") String token,
+        @RequestBody @Valid RemittanceDto.Request request
+    ) {
+        return ResponseEntity.ok(
+            transactionService.remittance(token.substring(TOKEN_PREFIX.length()), request)
+        );
     }
 }
