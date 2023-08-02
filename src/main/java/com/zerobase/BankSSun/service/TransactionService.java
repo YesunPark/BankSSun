@@ -57,8 +57,8 @@ public class TransactionService {
         // 거래 내역 테이블에 거래추가
         transactionRepository.save(
             TransactionEntity.builder()
-                .accountId(accountEntity.getId())
-                .transaction_type(Transaction.DEPOSIT)
+                .account(accountEntity)
+                .transactionType(Transaction.DEPOSIT)
                 .amount(request.getAmount())
                 .depositName(request.getDepositName())
                 .build()
@@ -88,7 +88,7 @@ public class TransactionService {
         }
 
         // 토큰의 사용자와 출금 요청 계좌의 소유주 일치 여부 확인
-        if (!Objects.equals(tokenUserId, accountEntity.getUserId())) {
+        if (!Objects.equals(tokenUserId, accountEntity.getUser().getId())) {
             throw new CustomException(TOKEN_NOT_MATCH_USER);
         }
 
@@ -103,8 +103,8 @@ public class TransactionService {
         // 거래 내역 테이블에 거래 추가
         transactionRepository.save(
             TransactionEntity.builder()
-                .accountId(accountEntity.getId())
-                .transaction_type(Transaction.WITHDRAW)
+                .account(accountEntity)
+                .transactionType(Transaction.WITHDRAW)
                 .amount(request.getAmount())
                 .depositName(request.getWithdrawName())
                 .build()
@@ -131,13 +131,10 @@ public class TransactionService {
                 request.getReceivedAccount())
             .orElseThrow(() -> new CustomException(RECEIVED_ACCOUNT_NOT_FOUND));
 
-        UserEntity recievedUserEntity = userRepository.findById(recievedAccountEntity.getUserId())
-            .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
         // 토큰의 사용자와 보내는 계좌의 사용자 확인
         Long tokenUserId = tokenProvider.getId(token);
 
-        if (!Objects.equals(tokenUserId, sentAccountEntity.getUserId())) {
+        if (!Objects.equals(tokenUserId, sentAccountEntity.getUser().getId())) {
             throw new CustomException(TOKEN_NOT_MATCH_USER);
         }
 
@@ -160,10 +157,10 @@ public class TransactionService {
         // 거래 테이블에 거래 저장
         transactionRepository.save(
             TransactionEntity.builder()
-                .accountId(sentAccountEntity.getId())
-                .transaction_type(Transaction.REMITTANCE)
+                .account(sentAccountEntity)
+                .transactionType(Transaction.REMITTANCE)
                 .amount(request.getAmount())
-                .receivedName(recievedUserEntity.getUsername())
+                .receivedName(recievedAccountEntity.getUser().getUsername())
                 .receivedAccount(request.getReceivedAccount())
                 .build()
         );
@@ -172,7 +169,7 @@ public class TransactionService {
             .sentAccount(request.getSentAccount())
             .receivedAccount(request.getReceivedAccount())
             .receivedBank(recievedAccountEntity.getBank())
-            .receivedName(recievedUserEntity.getUsername())
+            .receivedName(recievedAccountEntity.getUser().getUsername())
             .amount(request.getAmount())
             .build();
     }

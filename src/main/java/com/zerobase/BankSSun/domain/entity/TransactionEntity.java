@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,11 +32,11 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private Long accountId;
+    @ManyToOne
+    private AccountEntity account;
 
     @Enumerated(EnumType.STRING)
-    private Transaction transaction_type;
+    private Transaction transactionType;
 
     @NotNull
     private Long amount;
