@@ -33,7 +33,7 @@ public class AccountController {
             token.substring(TOKEN_PREFIX.length()), request);
         return ResponseEntity.ok(
             AccountCreateDto.Response.builder()
-                .userId(accountEntity.getUserId())
+                .userId(accountEntity.getUser().getId())
                 .accountNumber(accountEntity.getAccountNumber())
                 .amount(accountEntity.getAmount())
                 .createdAt(accountEntity.getCreatedAt())

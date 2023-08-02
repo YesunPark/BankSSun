@@ -3,10 +3,13 @@ package com.zerobase.BankSSun.service;
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_EMPTY;
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_FOUND;
 import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_NOT_MATCH_USER;
+import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_FOUND;
 import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_PERMITTED;
 
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
+import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.domain.repository.AccountRepository;
+import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.dto.AccountDeleteRequest;
 import com.zerobase.BankSSun.exception.CustomException;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     private final TokenProvider tokenProvider;
 
@@ -39,13 +43,16 @@ public class AccountService {
             throw new CustomException(TOKEN_NOT_MATCH_USER);
         }
 
+        UserEntity tokenUserEntity = userRepository.findById(tokenUserId)
+            .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
         String newAccountNumber = makeAccountNumber();
         String newAccountName = request.getAccountName();
 
         // 맞다면 계좌번호 생성 후 계좌 저장, 저장된 정보 컨트롤러로 넘김
         return accountRepository.save(
             AccountEntity.builder()
-                .userId(request.getUserId())
+                .user(tokenUserEntity)
                 .bank(Bank.SSun)
                 .accountNumber(newAccountNumber)
                 .accountName(newAccountName == null ? newAccountNumber : newAccountName)
@@ -77,7 +84,7 @@ public class AccountService {
 
         // 토큰의 사용자 id와 삭제를 요청한 계좌의 userId 비교
         Long tokenUserId = tokenProvider.getId(token);
-        if (!Objects.equals(tokenUserId, accountEntity.getUserId())) {
+        if (!Objects.equals(tokenUserId, accountEntity.getUser().getId())) {
             throw new CustomException(USER_NOT_PERMITTED);
         }
 
