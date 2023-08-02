@@ -2,6 +2,7 @@ package com.zerobase.BankSSun.service;
 
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_EMPTY;
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_FOUND;
+import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_NOT_MATCH_USER;
 import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_PERMITTED;
 
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
@@ -9,7 +10,7 @@ import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.dto.AccountDeleteRequest;
-import com.zerobase.BankSSun.exception.UserException;
+import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class AccountService {
         // 토큰에서 추출한 사용자와 요청으로 받은 사용자가 동일한지 비교
         Long tokenUserId = tokenProvider.getId(token);
         if (!Objects.equals(request.getUserId(), tokenUserId)) {
-            throw new RuntimeException("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다.");
+            throw new CustomException(TOKEN_NOT_MATCH_USER);
         }
 
         String newAccountNumber = makeAccountNumber();
@@ -72,17 +73,17 @@ public class AccountService {
     @Transactional
     public String deleteAccount(String token, AccountDeleteRequest request) {
         AccountEntity accountEntity = accountRepository.findById(request.getAccountId())
-            .orElseThrow(() -> new UserException(ACCOUNT_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(ACCOUNT_NOT_FOUND));
 
         // 토큰의 사용자 id와 삭제를 요청한 계좌의 userId 비교
         Long tokenUserId = tokenProvider.getId(token);
         if (!Objects.equals(tokenUserId, accountEntity.getUserId())) {
-            throw new UserException(USER_NOT_PERMITTED);
+            throw new CustomException(USER_NOT_PERMITTED);
         }
 
         // 계좌의 잔액이 0원인지 확인, 0원이 아니면 예외발생
         if (accountEntity.getAmount() != 0) {
-            throw new UserException(ACCOUNT_NOT_EMPTY);
+            throw new CustomException(ACCOUNT_NOT_EMPTY);
         }
 
         // 계좌 삭제(물리적 삭제가 아닌 삭제 상태로 변경)

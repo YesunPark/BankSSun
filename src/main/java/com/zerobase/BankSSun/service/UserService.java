@@ -6,7 +6,7 @@ import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.SignInRequest;
 import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
-import com.zerobase.BankSSun.exception.UserException;
+import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.type.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
     public UserEntity signUp(SignUpRequest user) {
         boolean exists = this.userRepository.existsByPhone(user.getPhone());
         if (exists) {
-            throw new UserException(ALREADY_EXISTS_PHONE);
+            throw new CustomException(ALREADY_EXISTS_PHONE);
         }
 
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
@@ -51,10 +51,10 @@ public class UserService implements UserDetailsService {
      */
     public UserEntity authenticate(SignInRequest user) {
         UserEntity userEntity = this.userRepository.findByPhone(user.getPhone())
-            .orElseThrow(() -> new UserException(ALREADY_EXISTS_PHONE));
+            .orElseThrow(() -> new CustomException(ALREADY_EXISTS_PHONE));
 
         if (!this.passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
-            throw new UserException(ErrorCode.PASSWORD_NOT_MATCH);
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
         }
 
         return userEntity;
