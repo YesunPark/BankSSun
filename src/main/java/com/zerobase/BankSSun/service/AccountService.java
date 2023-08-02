@@ -1,13 +1,18 @@
 package com.zerobase.BankSSun.service;
 
+import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_EMPTY;
+import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_FOUND;
 import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_NOT_MATCH_USER;
+import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_PERMITTED;
 
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
+import com.zerobase.BankSSun.dto.AccountDeleteRequest;
 import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +65,31 @@ public class AccountService {
         return accountRepository.findFirstByOrderByIdDesc()
             .map(accountEntity -> (Long.parseLong(accountEntity.getAccountNumber()) + 1) + "")
             .orElse("89300000000");
+    }
+
+    /**
+     * 계좌 삭제(논리적 삭제)_23.08.01
+     */
+    @Transactional
+    public String deleteAccount(String token, AccountDeleteRequest request) {
+        AccountEntity accountEntity = accountRepository.findById(request.getAccountId())
+            .orElseThrow(() -> new CustomException(ACCOUNT_NOT_FOUND));
+
+        // 토큰의 사용자 id와 삭제를 요청한 계좌의 userId 비교
+        Long tokenUserId = tokenProvider.getId(token);
+        if (!Objects.equals(tokenUserId, accountEntity.getUserId())) {
+            throw new CustomException(USER_NOT_PERMITTED);
+        }
+
+        // 계좌의 잔액이 0원인지 확인, 0원이 아니면 예외발생
+        if (accountEntity.getAmount() != 0) {
+            throw new CustomException(ACCOUNT_NOT_EMPTY);
+        }
+
+        // 계좌 삭제(물리적 삭제가 아닌 삭제 상태로 변경)
+        accountEntity.setIsDeleted(true);
+        accountEntity.setDeletedAt(LocalDateTime.now());
+
+        return accountEntity.getAccountNumber() + " 계좌가 삭제되었습니다.";
     }
 }
