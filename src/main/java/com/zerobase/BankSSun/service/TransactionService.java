@@ -131,10 +131,6 @@ public class TransactionService {
                 request.getReceivedAccount())
             .orElseThrow(() -> new CustomException(RECEIVED_ACCOUNT_NOT_FOUND));
 
-        UserEntity recievedUserEntity = userRepository.findById(
-                recievedAccountEntity.getUser().getId())
-            .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
         // 토큰의 사용자와 보내는 계좌의 사용자 확인
         Long tokenUserId = tokenProvider.getId(token);
 
@@ -164,7 +160,7 @@ public class TransactionService {
                 .account(sentAccountEntity)
                 .transactionType(Transaction.REMITTANCE)
                 .amount(request.getAmount())
-                .receivedName(recievedUserEntity.getUsername())
+                .receivedName(recievedAccountEntity.getUser().getUsername())
                 .receivedAccount(request.getReceivedAccount())
                 .build()
         );
@@ -173,7 +169,7 @@ public class TransactionService {
             .sentAccount(request.getSentAccount())
             .receivedAccount(request.getReceivedAccount())
             .receivedBank(recievedAccountEntity.getBank())
-            .receivedName(recievedUserEntity.getUsername())
+            .receivedName(recievedAccountEntity.getUser().getUsername())
             .amount(request.getAmount())
             .build();
     }
