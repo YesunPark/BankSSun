@@ -13,10 +13,10 @@ public class RemittanceDto {
     public static class Request {
 
         @NotBlank(message = "보내는 계좌번호는 필수값입니다.")
-        private String sentAccount;
+        private String sentAccountNumber;
 
         @NotBlank(message = "받는 계좌번호는 필수값입니다.")
-        private String receivedAccount;
+        private String receivedAccountNumber;
 
         @NotNull(message = "송금액은 필수값입니다.")
         @Min(value = 1, message = "송금 최소금액은 1원입니다.")
@@ -27,9 +27,9 @@ public class RemittanceDto {
     @Builder
     public static class Response {
 
-        private String sentAccount;
+        private String sentAccountNumber;
 
-        private String receivedAccount;
+        private String receivedAccountNumber;
 
         private Bank receivedBank;
 

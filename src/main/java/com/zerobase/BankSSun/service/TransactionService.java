@@ -124,11 +124,11 @@ public class TransactionService {
     @Transactional
     public RemittanceDto.Response remittance(String token, RemittanceDto.Request request) {
         AccountEntity sentAccountEntity = accountRepository.findByAccountNumber(
-                request.getSentAccount())
+                request.getSentAccountNumber())
             .orElseThrow(() -> new CustomException(SENT_ACCOUNT_NOT_FOUND));
 
         AccountEntity recievedAccountEntity = accountRepository.findByAccountNumber(
-                request.getReceivedAccount())
+                request.getReceivedAccountNumber())
             .orElseThrow(() -> new CustomException(RECEIVED_ACCOUNT_NOT_FOUND));
 
         // 토큰의 사용자와 보내는 계좌의 사용자 확인
@@ -161,13 +161,13 @@ public class TransactionService {
                 .transactionType(Transaction.REMITTANCE)
                 .amount(request.getAmount())
                 .receivedName(recievedAccountEntity.getUser().getUsername())
-                .receivedAccount(request.getReceivedAccount())
+                .receivedAccount(request.getReceivedAccountNumber())
                 .build()
         );
 
         return RemittanceDto.Response.builder()
-            .sentAccount(request.getSentAccount())
-            .receivedAccount(request.getReceivedAccount())
+            .sentAccountNumber(request.getSentAccountNumber())
+            .receivedAccountNumber(request.getReceivedAccountNumber())
             .receivedBank(recievedAccountEntity.getBank())
             .receivedName(recievedAccountEntity.getUser().getUsername())
             .amount(request.getAmount())
