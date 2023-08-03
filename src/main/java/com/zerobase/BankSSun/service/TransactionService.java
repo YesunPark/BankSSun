@@ -294,6 +294,7 @@ public class TransactionService {
      * 거래 종류에 따라 거래 대상자 이름 반환_23.08.03
      *
      * @implNote 반환되는 이름 종류: 출금자명, 입금자명, 송금 받은 계좌 소유주명
+     * @implNote getTransactionList 에서만 사용
      */
     private String getTransactionTargetName(TransactionEntity transaction) {
         switch (transaction.getTransactionType()) {
@@ -312,6 +313,8 @@ public class TransactionService {
 
     /**
      * 거래 내역 조회 Response Dto 반환_23.08.03
+     *
+     * @implNote getTransactionList 에서만 사용
      */
     private TransactionListDto.Response getTransactionListResponse(
         Long accountId, LocalDateTime startDateTime, LocalDateTime endDateTime
