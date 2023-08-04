@@ -18,12 +18,12 @@ public class OtherBankAccountCreateDto {
         @NotNull(message = "은행명은 필수값입니다.")
         private Bank bank;
 
-        @NotBlank
-        @Size(min = 2, message = "계좌 별칭은 2 자리 이상 입력해주세요.")
+        @NotBlank(message = "계좌 별칭은 필수값입니다.")
+        @Size(min = 2,max = 8, message = "계좌 별칭은 2~8자리 입니다.")
         private String accountName;
 
         @NotBlank(message = "계좌번호는 필수값입니다.")
-        @Size(min = 11, max = 13, message = "계좌 번호는 11~13 자리입니다.")
+        @Size(min = 11, max = 13, message = "계좌 번호는 11~13자리 입니다.")
         private String accountNumber;
 
         @NotNull
