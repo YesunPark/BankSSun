@@ -1,4 +1,4 @@
-package com.zerobase.BankSSun.vo;
+package com.zerobase.BankSSun.dto.transaction;
 
 import com.zerobase.BankSSun.type.Transaction;
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class TransactionVo {
+public class TransactionDto {
 
     private Long id;
 

@@ -13,16 +13,15 @@ import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.domain.entity.TransactionEntity;
 import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.TransactionRepository;
-import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.transaction.DepositDto;
 import com.zerobase.BankSSun.dto.transaction.RemittanceDto;
+import com.zerobase.BankSSun.dto.transaction.TransactionDto;
 import com.zerobase.BankSSun.dto.transaction.TransactionListDto;
 import com.zerobase.BankSSun.dto.transaction.WithdrawDto;
 import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
 import com.zerobase.BankSSun.type.ErrorCode;
 import com.zerobase.BankSSun.type.Transaction;
-import com.zerobase.BankSSun.vo.TransactionVo;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -325,7 +324,7 @@ public class TransactionService {
         return TransactionListDto.Response.builder()
             .transactionList(resultList.stream()
                 .map(transaction ->
-                    TransactionVo.builder()
+                    TransactionDto.builder()
                         .id(transaction.getId())
                         .transactionTargetName(getTransactionTargetName(transaction))
                         .amount(transaction.getAmount())

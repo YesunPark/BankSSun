@@ -1,6 +1,5 @@
 package com.zerobase.BankSSun.dto.transaction;
 
-import com.zerobase.BankSSun.vo.TransactionVo;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -29,6 +28,6 @@ public class TransactionListDto {
     @Builder
     public static class Response {
 
-        private List<TransactionVo> transactionList;
+        private List<TransactionDto> transactionList;
     }
 }
