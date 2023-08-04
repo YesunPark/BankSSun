@@ -22,10 +22,10 @@ import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
 import com.zerobase.BankSSun.type.ErrorCode;
 import com.zerobase.BankSSun.type.Transaction;
-import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import javax.transaction.Transactional;
@@ -181,7 +181,7 @@ public class TransactionService {
     }
 
     /**
-     * 거래 내역 조회_23.08.03
+     * 거래 내역 조회_23.08.04
      *
      * @apiNote 삭제된 계좌는 거래 내역 조회 불가
      * @apiNote 삭제되지 않은 계좌의 거래 내역에 포함된 삭제된 계좌와의 거래는 표시
@@ -207,70 +207,44 @@ public class TransactionService {
         }
 
         // 올바르게 요청된 날짜 형식: "yyyy-MM-dd"
-        int DATE_FORMAT_LENGTH = ("yyyy-MM-dd").length();
-        String startDateStr = request.getStartDate();
-        String endDateStr = request.getEndDate();
-        String nowDateStr = LocalDateTime.now().toString().substring(0, DATE_FORMAT_LENGTH);
+        LocalDate startDate = request.getStartDate();
+        LocalDate endDate = request.getEndDate();
+        LocalDate nowDate = LocalDate.now();
         int defaultDateRange = 7;
         int maxDateRange = 7;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         // 시작 날짜와 끝 날짜가 null 인 경우 (조회일 포함 일주일 내역 반환)
-        if (startDateStr == null && endDateStr == null) {
-            LocalDateTime nowDateTime = LocalDateTime.now();
-            String weekAgoStr = nowDateTime.minusDays(defaultDateRange - 1).toString()
-                .substring(0, DATE_FORMAT_LENGTH);
+        if (startDate == null && endDate == null) {
+            LocalDate weekAgoDate = nowDate.minusDays(defaultDateRange - 1);
 
-            LocalDateTime weekAgoDateTime = LocalDateTime.parse(
-                String.format("%s 00:00:00", weekAgoStr), formatter
-            );
-
-            return getTransactionListResponse(request.getAccountId(), weekAgoDateTime, nowDateTime);
+            return getTransactionListResponse(request.getAccountId(), weekAgoDate, nowDate);
         }
 
-        // 시작 날짜와 끝 날짜 둘 중 하나라도 null 로 보낸 경우
-        if (startDateStr == null || endDateStr == null) {
+        // 시작 날짜와 끝 날짜 둘 중 하나만 null 로 보낸 경우
+        if (startDate == null || endDate == null) {
             throw new CustomException(INVALID_DATE);
         }
 
-        // ======== 이 아래로는 두 날짜 다 null 이 아닌 경우들 ========
+        // ======== 두 날짜 다 null 이 아닌 경우들 ========
 
-        LocalDateTime startDateTime;
-        LocalDateTime endDateTime;
-
-        // 두 날짜 중 하나라도 유효하지 않은 날짜(형식)인 경우 ex. 2023-00-44, 230101, 20230808, 23-08-08...
-        try {
-            startDateTime = LocalDateTime.parse(
-                String.format("%s 00:00:00", startDateStr), formatter);
-            endDateTime = LocalDateTime.parse(
-                String.format("%s 23:59:59", endDateStr), formatter);
-        } catch (DateTimeException e) {
-            throw new CustomException(INVALID_DATE);
-        }
-
-        // 끝 날짜가 시작 날짜를 초과한 경우
-        if (startDateTime.isAfter(endDateTime)) {
+        // 시작 날짜가 끝 날짜를 초과한 경우
+        if (startDate.isAfter(endDate)) {
             throw new CustomException(INVALID_DATE);
         }
 
         // 끝 날짜가 조회 당일 날짜를 초과한 경우
-        LocalDateTime todayDateTime = LocalDateTime.parse(
-            String.format("%s 23:59:59", nowDateStr), formatter
-        );
-        if (endDateTime.isAfter(todayDateTime)) {
+        if (endDate.isAfter(nowDate)) {
             throw new CustomException(INVALID_DATE);
         }
 
         // 조회 기간이 최대 조회 기간을 넘을 경우
-        int betweenDays = Period.between(startDateTime.toLocalDate(), endDateTime.toLocalDate())
-            .getDays();
+        int betweenDays = (int) ChronoUnit.DAYS.between(startDate, endDate);
         if (betweenDays + 1 > maxDateRange) {
             throw new CustomException(INVALID_DATE_RANGE);
         }
 
         // 두 날짜 전부 제대로 조회한 경우
-        return getTransactionListResponse(request.getAccountId(), startDateTime, endDateTime);
+        return getTransactionListResponse(request.getAccountId(), startDate, endDate);
     }
 
     // 토큰에서 추출한 사용자와 요청 객체에서 추출한 사용자가 일치한지
@@ -311,15 +285,15 @@ public class TransactionService {
     }
 
     /**
-     * 거래 내역 조회 Response Dto 반환_23.08.03
+     * 거래 내역 조회 Response Dto 반환_23.08.04
      *
      * @implNote getTransactionList 에서만 사용
      */
     private TransactionListDto.Response getTransactionListResponse(
-        Long accountId, LocalDateTime startDateTime, LocalDateTime endDateTime
+        Long accountId, LocalDate startDate, LocalDate endDate
     ) {
         List<TransactionEntity> resultList = transactionRepository.findByAccountIdAndTransactedAtBetween(
-            accountId, startDateTime, endDateTime
+            accountId, startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX)
         );
         return TransactionListDto.Response.builder()
             .transactionList(resultList.stream()

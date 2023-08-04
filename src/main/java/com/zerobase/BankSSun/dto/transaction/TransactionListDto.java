@@ -1,5 +1,8 @@
 package com.zerobase.BankSSun.dto.transaction;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -14,14 +17,16 @@ public class TransactionListDto {
 
         @NotNull
         @Min(1)
-        private Long accountId;         // 거래 내역을 조회할 계좌 id
+        private Long accountId;             // 거래 내역을 조회할 계좌 id
 
         @NotBlank(message = "계좌번호는 필수값입니다.")
-        private String accountNumber;   // 거래 내역의 조회할 계좌번호
+        private String accountNumber;       // 거래 내역의 조회할 계좌번호
 
-        private String startDate;       // 조회 시작 날짜
+        @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDate startDate;    // 조회 시작 날짜
 
-        private String endDate;         // 조회 마지막 날짜
+        @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDate endDate;      // 조회 마지막 날짜
     }
 
     @Getter
