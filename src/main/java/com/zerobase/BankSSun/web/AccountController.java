@@ -5,6 +5,7 @@ import static com.zerobase.BankSSun.security.JwtAuthenticationFilter.TOKEN_PREFI
 import com.zerobase.BankSSun.domain.entity.AccountEntity;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.dto.AccountDeleteRequest;
+import com.zerobase.BankSSun.dto.account.OtherBankAccountCreateDto;
 import com.zerobase.BankSSun.service.AccountService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,19 @@ public class AccountController {
         return ResponseEntity.ok(
             accountService.deleteAccount(
                 token.substring(TOKEN_PREFIX.length()), request)
+        );
+    }
+
+    /**
+     * 타 은행 계좌 등록_23.08.04
+     */
+    @PostMapping("/account/other")
+    public ResponseEntity<OtherBankAccountCreateDto.Response> registerOtherBankAccount(
+        @RequestHeader(name = "Authorization") String token,
+        @RequestBody @Valid OtherBankAccountCreateDto.Request request
+    ) {
+        return ResponseEntity.ok(
+            accountService.registerOtherBankAccount(token.substring(TOKEN_PREFIX.length()), request)
         );
     }
 }

@@ -15,6 +15,7 @@ public enum ErrorCode {
     TOKEN_EXPIRED("유효기간이 만료된 토큰입니다. 다시 로그인해주세요."),
     TOKEN_NOT_MATCH_USER("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다."),
 
+    ALREADY_EXISTS_ACCOUNT_NUMBER("이미 존재하는 계좌 번호입니다."),
     ACCOUNT_NOT_FOUND("계좌를 찾을 수 없습니다."),
     SENT_ACCOUNT_NOT_FOUND("송금 보내는 계좌를 찾을 수 없습니다."),
     RECEIVED_ACCOUNT_NOT_FOUND("송금 받는 계좌를 찾을 수 없습니다."),

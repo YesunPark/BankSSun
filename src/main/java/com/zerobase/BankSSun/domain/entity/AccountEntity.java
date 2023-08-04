@@ -42,6 +42,7 @@ public class AccountEntity extends BaseEntity {
     private Bank bank;
 
     @NotNull
+    @Column(unique = true)
     private String accountNumber;
 
     @NotNull
