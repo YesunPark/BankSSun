@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.zerobase.BankSSun.domain.entity.UserEntity;
 import com.zerobase.BankSSun.dto.SignUpDto.SignUpRequest;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@Transactional
 class UserServiceTest {
 
     @Autowired
@@ -23,7 +25,7 @@ class UserServiceTest {
     void signUp() {
         //given
         SignUpRequest form = SignUpRequest.builder()
-            .phone("01012345678")
+            .phone("01012345670")
             .username("test")
             .password("101010")
             .role("ROLE_USER")
@@ -33,7 +35,7 @@ class UserServiceTest {
         UserEntity user = userService.signUp(form);
 
         //then
-        assertEquals("01012345678", user.getPhone());
+        assertEquals("01012345670", user.getPhone());
         assertEquals("test", user.getUsername());
     }
 }
