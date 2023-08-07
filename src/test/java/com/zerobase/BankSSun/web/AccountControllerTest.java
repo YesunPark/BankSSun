@@ -50,7 +50,7 @@ class AccountControllerTest {
         .build();
 
     @Test
-    @DisplayName("계좌 생성 성공")
+    @DisplayName("계좌 생성 성공 - 토큰, 사용자 id, 계좌 별칭, 초기금액을 받아 생성")
     void successCreateAccount() throws Exception {
         //given
         given(accountService.createAccount(any(), any()))
@@ -111,7 +111,7 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("계좌 생성 실패 - 요청 body 형식 오류")
+    @DisplayName("계좌 생성 실패 - 요청 body 형식 오류(사용자 id 누락)")
     void failInvalidRequestBody() throws Exception {
         //given
         given(accountService.createAccount(any(), any()))
