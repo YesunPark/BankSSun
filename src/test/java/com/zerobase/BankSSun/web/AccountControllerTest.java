@@ -41,22 +41,22 @@ class AccountControllerTest {
     @MockBean
     private AuthenticationManager authenticationManager;
 
+    UserEntity user = UserEntity.builder()
+        .id(1L)
+        .username("yesun")
+        .phone("01000000000")
+        .password("1111")
+        .role(String.valueOf(Authority.ROLE_USER))
+        .build();
+
     @Test
     @DisplayName("계좌 생성 성공")
     void successCreateAccount() throws Exception {
         //given
-        UserEntity user = UserEntity.builder()
-            .id(1L)
-            .username("yesun")
-            .phone("01000000000")
-            .password("1111")
-            .role(String.valueOf(Authority.ROLE_USER))
-            .build();
-
         given(accountService.createAccount(any(), any()))
             .willReturn(AccountEntity.builder()
                 .id(1L)
-                .user(user)
+                .user(this.user)
                 .bank(Bank.SSun)
                 .accountNumber("89300000000")
                 .accountName("test")
@@ -78,6 +78,64 @@ class AccountControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.userId").value(1))
             .andExpect(jsonPath("$.accountNumber").value("89300000000"))
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("계좌 생성 실패 - 헤더에 Authorization 없음")
+    void failNotIncludeHeader() throws Exception {
+        //given
+        given(accountService.createAccount(any(), any()))
+            .willReturn(AccountEntity.builder()
+                .id(1L)
+                .user(this.user)
+                .bank(Bank.SSun)
+                .accountNumber("89300000000")
+                .accountName("test")
+                .amount(1000L)
+                .isDeleted(false)
+                .build());
+        //when
+        //then
+        mockMvc.perform(post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                    AccountCreateDto.Request.builder()
+                        .userId(1L)
+                        .accountName("test")
+                        .initialBalance(1000L)
+                        .build()
+                )))
+            .andExpect(status().is4xxClientError())
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("계좌 생성 실패 - 요청 body 형식 오류")
+    void failInvalidRequestBody() throws Exception {
+        //given
+        given(accountService.createAccount(any(), any()))
+            .willReturn(AccountEntity.builder()
+                .id(1L)
+                .user(this.user)
+                .bank(Bank.SSun)
+                .accountNumber("89300000000")
+                .accountName("test")
+                .amount(1000L)
+                .isDeleted(false)
+                .build());
+        //when
+        //then
+        mockMvc.perform(post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "tokennnnnn")
+                .content(objectMapper.writeValueAsString(
+                    AccountCreateDto.Request.builder()
+                        .accountName("test")
+                        .initialBalance(1000L)
+                        .build()
+                )))
+            .andExpect(status().is4xxClientError())
             .andDo(print());
     }
 }
