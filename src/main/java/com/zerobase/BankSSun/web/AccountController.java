@@ -22,22 +22,15 @@ public class AccountController {
     private final AccountService accountService;
 
     /**
-     * 계좌 생성_23.08.01
+     * 계좌 생성_23.08.08
      */
     @PostMapping("/account")
     public ResponseEntity<AccountCreateDto.Response> createAccount(
         @RequestHeader(name = "Authorization") String token,
         @RequestBody @Valid AccountCreateDto.Request request
     ) {
-        AccountEntity accountEntity = accountService.createAccount(
-            token.substring(TOKEN_PREFIX.length()), request);
         return ResponseEntity.ok(
-            AccountCreateDto.Response.builder()
-                .userId(accountEntity.getUser().getId())
-                .accountNumber(accountEntity.getAccountNumber())
-                .amount(accountEntity.getAmount())
-                .createdAt(accountEntity.getCreatedAt())
-                .build()
+            accountService.createAccount(token.substring(TOKEN_PREFIX.length()), request)
         );
     }
 
