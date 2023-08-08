@@ -36,7 +36,7 @@ public class AccountService {
      * 계좌 생성(SSun 은행)_23.08.02
      */
     @Transactional
-    public AccountEntity createAccount(String token, AccountCreateDto.Request request) {
+    public AccountCreateDto.Response createAccount(String token, AccountCreateDto.Request request) {
         // 토큰에서 추출한 사용자와 요청으로 받은 사용자가 동일한지 비교
         Long tokenUserId = tokenProvider.getId(token);
         if (!Objects.equals(request.getUserId(), tokenUserId)) {
@@ -49,8 +49,8 @@ public class AccountService {
         String newAccountNumber = makeAccountNumber();
         String newAccountName = request.getAccountName();
 
-        // 맞다면 계좌번호 생성 후 계좌 저장, 저장된 정보 컨트롤러로 넘김
-        return accountRepository.save(
+        // 계좌번호 생성 후 계좌 생성(저장)
+        AccountEntity accountEntity = accountRepository.save(
             AccountEntity.builder()
                 .user(tokenUserEntity)
                 .bank(Bank.SSun)
@@ -60,6 +60,14 @@ public class AccountService {
                 .isDeleted(false)
                 .build()
         );
+
+        // 저장된 정보를 DTO 로 반환 후 컨트롤러로 넘김
+        return AccountCreateDto.Response.builder()
+            .userId(accountEntity.getUser().getId())
+            .accountNumber(accountEntity.getAccountNumber())
+            .amount(accountEntity.getAmount())
+            .createdAt(accountEntity.getCreatedAt())
+            .build();
     }
 
 
