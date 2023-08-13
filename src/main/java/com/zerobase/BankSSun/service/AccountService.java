@@ -2,6 +2,8 @@ package com.zerobase.BankSSun.service;
 
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_EMPTY;
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_FOUND;
+import static com.zerobase.BankSSun.type.ErrorCode.ALREADY_EXISTS_ACCOUNT_NUMBER;
+import static com.zerobase.BankSSun.type.ErrorCode.ONLY_CAN_REGISTERED_OTHER_BANK;
 import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_NOT_MATCH_USER;
 import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_FOUND;
 import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_PERMITTED;
@@ -12,6 +14,7 @@ import com.zerobase.BankSSun.domain.repository.AccountRepository;
 import com.zerobase.BankSSun.domain.repository.UserRepository;
 import com.zerobase.BankSSun.dto.AccountCreateDto;
 import com.zerobase.BankSSun.dto.AccountDeleteRequest;
+import com.zerobase.BankSSun.dto.account.OtherBankAccountCreateDto;
 import com.zerobase.BankSSun.exception.CustomException;
 import com.zerobase.BankSSun.security.TokenProvider;
 import com.zerobase.BankSSun.type.Bank;
@@ -70,7 +73,6 @@ public class AccountService {
             .build();
     }
 
-
     /**
      * 계좌번호 생성_23.08.01
      */
@@ -106,5 +108,48 @@ public class AccountService {
         accountEntity.setDeletedAt(LocalDateTime.now());
 
         return accountEntity.getAccountNumber() + " 계좌가 삭제되었습니다.";
+    }
+
+    /**
+     * 타 은행 계좌 등록_23.08.13
+     */
+    @Transactional
+    public OtherBankAccountCreateDto.Response registerOtherBankAccount(String token,
+        OtherBankAccountCreateDto.Request request) {
+        Long tokenUserId = tokenProvider.getId(token);
+        UserEntity tokenUserEntity = userRepository.findById(tokenUserId)
+            .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        // 등록할 은행이 SSun 은행이 아닌지 검증
+        if (!Bank.SSun.equals(request.getBank())) {
+            throw new CustomException(ONLY_CAN_REGISTERED_OTHER_BANK);
+        }
+
+        // 계좌 번호 중복 여부 확인
+        boolean isPresentAccountNumber = accountRepository.findByAccountNumber(
+            request.getAccountNumber()).isPresent();
+        if (isPresentAccountNumber) {
+            throw new CustomException(ALREADY_EXISTS_ACCOUNT_NUMBER);
+        }
+
+        // 계좌 정보 저장
+        AccountEntity accountEntity = accountRepository.save(
+            AccountEntity.builder()
+                .user(tokenUserEntity)
+                .bank(request.getBank())
+                .accountNumber(request.getAccountNumber())
+                .accountName(request.getAccountName())
+                .amount(request.getInitialBalance())
+                .isDeleted(false)
+                .build()
+
+        );
+
+        return OtherBankAccountCreateDto.Response.builder()
+            .bank(accountEntity.getBank())
+            .accountNumber(accountEntity.getAccountNumber())
+            .amount(accountEntity.getAmount())
+            .createdAt(accountEntity.getCreatedAt())
+            .build();
     }
 }
