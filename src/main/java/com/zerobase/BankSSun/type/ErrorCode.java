@@ -16,6 +16,7 @@ public enum ErrorCode {
     TOKEN_NOT_MATCH_USER("요청하신 사용자와 Token 인증 사용자가 일치하지 않습니다."),
 
     ALREADY_EXISTS_ACCOUNT_NUMBER("이미 존재하는 계좌 번호입니다."),
+    ONLY_CAN_REGISTERED_OTHER_BANK("SSun 은행이 아닌 다른 은행의 계좌를 등록해주세요."),
     ACCOUNT_NOT_FOUND("계좌를 찾을 수 없습니다."),
     SENT_ACCOUNT_NOT_FOUND("송금 보내는 계좌를 찾을 수 없습니다."),
     RECEIVED_ACCOUNT_NOT_FOUND("송금 받는 계좌를 찾을 수 없습니다."),

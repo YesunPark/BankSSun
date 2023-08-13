@@ -3,6 +3,7 @@ package com.zerobase.BankSSun.service;
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_EMPTY;
 import static com.zerobase.BankSSun.type.ErrorCode.ACCOUNT_NOT_FOUND;
 import static com.zerobase.BankSSun.type.ErrorCode.ALREADY_EXISTS_ACCOUNT_NUMBER;
+import static com.zerobase.BankSSun.type.ErrorCode.ONLY_CAN_REGISTERED_OTHER_BANK;
 import static com.zerobase.BankSSun.type.ErrorCode.TOKEN_NOT_MATCH_USER;
 import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_FOUND;
 import static com.zerobase.BankSSun.type.ErrorCode.USER_NOT_PERMITTED;
@@ -110,7 +111,7 @@ public class AccountService {
     }
 
     /**
-     * 타 은행 계좌 등록_23.08.04
+     * 타 은행 계좌 등록_23.08.13
      */
     @Transactional
     public OtherBankAccountCreateDto.Response registerOtherBankAccount(String token,
@@ -118,6 +119,11 @@ public class AccountService {
         Long tokenUserId = tokenProvider.getId(token);
         UserEntity tokenUserEntity = userRepository.findById(tokenUserId)
             .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        // 등록할 은행이 SSun 은행이 아닌지 검증
+        if (!Bank.SSun.equals(request.getBank())) {
+            throw new CustomException(ONLY_CAN_REGISTERED_OTHER_BANK);
+        }
 
         // 계좌 번호 중복 여부 확인
         boolean isPresentAccountNumber = accountRepository.findByAccountNumber(
