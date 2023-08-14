@@ -79,7 +79,7 @@ public class TransactionService {
     }
 
     /**
-     * 현금 출금_23.08.02
+     * 현금 출금_23.08.14
      */
     @Transactional
     public WithdrawDto.Response withdraw(String token, WithdrawDto.Request request) {
@@ -112,7 +112,7 @@ public class TransactionService {
                 .account(accountEntity)
                 .transactionType(Transaction.WITHDRAW)
                 .amount(request.getAmount())
-                .depositName(request.getWithdrawName())
+                .withdrawName(request.getWithdrawName())
                 .build()
         );
 
