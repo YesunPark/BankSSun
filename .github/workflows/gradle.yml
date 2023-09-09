@@ -1,0 +1,82 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    # application.properties는 외부에 노출되면 안되므로 Actions가 빌드될때마다 해당 Repository의 Secret 설정을
+    # 이용하여서 설정 파일을 생성해줌 (github에 commit 되는게 아님!)
+    - run : touch ./src/main/resources/application.properties
+    - run : echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+    - run : cat ./src/main/resources/application.properties
+
+    # gradlew에 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # gradlew 빌드
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      with:
+        arguments: build
+
+	  # 빌드를 성공하면 해당 프로젝트를 zip로 만듬
+    # 이름은 run 에서 설정 가능
+    - name: Make zip file
+      run: zip -r ./<자신이 만들 ZIP 파일 이름>.zip .
+      shell: bash
+
+    #2  
+    # AWS 계정 설정
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+      # 깃허브 Secret에 넣어둔 Access key
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      # 깃허브 Secret에 넣어둔 Secret key
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # 깃허브 Secret에 넣어둔 Region
+        aws-region: ${{ secrets.AWS_REGION }}
+        
+    #3
+	  # 만들어 놓은 S3에 해당 zip 파일 저장
+    - name: Upload to S3
+      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./<자신이 만든 ZIP 파일 이름>.zip s3://<만들어 놓은 버킷 이름>/<자신이 만든 ZIP 파일 이름>.zip
+
+    #4
+    # AWS CodeDeploy에 배포
+    - name: Deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws deploy create-deployment \
+        --application-name <AWS codeDeploy 애플리케이션 이름> \
+        --deployment-group-name <codeDeploy group 이름> \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=<만들어 놓은 버킷 이름>,bundleType=zip,key=<자신이 만든 ZIP 파일 이름>.zip \
+        --region ${{ secrets.AWS_REGION }}
