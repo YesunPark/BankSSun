@@ -47,7 +47,7 @@ jobs:
 	  # 빌드를 성공하면 해당 프로젝트를 zip로 만듬
     # 이름은 run 에서 설정 가능
     - name: Make zip file
-      run: zip -r ./<자신이 만들 ZIP 파일 이름>.zip .
+      run: zip -r ./BankSSun-0.0.1-SNAPSHOT.zip .
       shell: bash
 
     #2  
@@ -65,7 +65,7 @@ jobs:
     #3
 	  # 만들어 놓은 S3에 해당 zip 파일 저장
     - name: Upload to S3
-      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./<자신이 만든 ZIP 파일 이름>.zip s3://<만들어 놓은 버킷 이름>/<자신이 만든 ZIP 파일 이름>.zip
+      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./BankSSun-0.0.1-SNAPSHOT.zip s3://bankssun/BankSSun-0.0.1-SNAPSHOT.zip
 
     #4
     # AWS CodeDeploy에 배포
@@ -75,8 +75,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         aws deploy create-deployment \
-        --application-name <AWS codeDeploy 애플리케이션 이름> \
-        --deployment-group-name <codeDeploy group 이름> \
+        --application-name bankssun \
+        --deployment-group-name bankssun \
         --file-exists-behavior OVERWRITE \
-        --s3-location bucket=<만들어 놓은 버킷 이름>,bundleType=zip,key=<자신이 만든 ZIP 파일 이름>.zip \
+        --s3-location bucket=bankssun,bundleType=zip,key=BankSSun-0.0.1-SNAPSHOT.zip \
         --region ${{ secrets.AWS_REGION }}
