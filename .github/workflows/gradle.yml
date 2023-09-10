@@ -43,8 +43,8 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build
-
-	  # 빌드를 성공하면 해당 프로젝트를 zip로 만듬
+	
+ # 빌드를 성공하면 해당 프로젝트를 zip로 만듬
     # 이름은 run 에서 설정 가능
     - name: Make zip file
       run: zip -r ./BankSSun-0.0.1-SNAPSHOT.zip .
@@ -63,7 +63,7 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
         
     #3
-	  # 만들어 놓은 S3에 해당 zip 파일 저장
+    # 만들어 놓은 S3에 해당 zip 파일 저장
     - name: Upload to S3
       run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./BankSSun-0.0.1-SNAPSHOT.zip s3://bankssun/BankSSun-0.0.1-SNAPSHOT.zip
 
