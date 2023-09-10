@@ -4,6 +4,11 @@ files:
   - source: /
     destination: /home/ec2-user/app/deploy
 
+permissions:
+  - object: /home/ubuntu
+    owner: ec2-user
+    group: ec2-user
+
 hooks:
   AfterInstall:
     - location: scripts/stop.sh
