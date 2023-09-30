@@ -96,11 +96,3 @@
 
 ![img](./docs/ERD%200730.png)
 
-## [Trouble Shooting]
-
-[프로젝트를 진행하며 발생했던 어려움들과 해결방법](./docs/Trouble_Shooting.md)입니다.
-
-## [프로젝트를 하며 느낀 점]
-
-< 프로젝트 완성 후 추가 예정>
-
